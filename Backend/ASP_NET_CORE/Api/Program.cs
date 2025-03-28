@@ -5,6 +5,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularLocalhost",
+        builder => builder.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader()
+    );
+});
+
 builder.Configuration.AddUserSecrets<Program>();
 
 
@@ -39,7 +49,9 @@ if (app.Environment.IsDevelopment())
 
 }
 
+
 app.UseHttpsRedirection();
+app.UseCors("AllowAngularLocalhost");
 
 app.UseAuthentication();
 app.UseAuthorization();
