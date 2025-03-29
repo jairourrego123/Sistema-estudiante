@@ -28,7 +28,7 @@ export class LoginComponent {
 login(): void {
     const { username, password } = this.form.value;
     this.authService.login(username, password).subscribe({
-      next: () => this.router.navigate(['/home']),
+      next: () =>  this.router.navigate(['/home']),
       error: (error) => console.error('Error de autenticación:', error)
     });
 }

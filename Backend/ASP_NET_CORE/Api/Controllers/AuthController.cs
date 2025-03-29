@@ -21,7 +21,7 @@ namespace Api.Controllers
         /// <summary>
         /// Registra un nuevo usuario.
         /// </summary>
-        [HttpPost("register")]
+        [HttpPost("registrar-usuario")]
         public async Task<IActionResult> RegistrarUsuario([FromBody] RegistroDto dto)
         {
             try

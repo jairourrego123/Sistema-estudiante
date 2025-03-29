@@ -4,10 +4,12 @@ import { LoginComponent } from './features/auth/login/login.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterModule,LoginComponent],
+  imports: [RouterModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
+
+
 export class AppComponent {
-  title = 'Prueba-Tecnica';
+  title = 'Sistema';
 }

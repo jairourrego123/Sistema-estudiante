@@ -5,6 +5,7 @@ import { tap } from 'rxjs/operators';
 import {jwtDecode} from 'jwt-decode';
 import { Tokens } from '../../models/tokens';
 import { environment } from '../../../environments/environment';
+import { Usuario } from '../../models/usuario';
 
 @Injectable({
   providedIn: 'root'
@@ -21,8 +22,8 @@ export class AuthService {
     );
   }
 
-  register(user: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, user);
+  register(user: Usuario): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/registrar-usuario`, user);
   }
 
   private storeTokens(tokens: Tokens): void {
