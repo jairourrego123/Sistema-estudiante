@@ -27,7 +27,7 @@ export class RegistroComponent {
     });
   }
 
-  register(): void {
+  registrar(): void {
     const user = this.form.value;
     this.authService.register(user).subscribe({
       next: () => this.router.navigate(['/login']),

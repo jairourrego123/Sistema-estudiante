@@ -56,7 +56,7 @@ namespace Api.Controllers
           
         }
 
-        [HttpPost("refresh")]
+        [HttpPost("token/refresh")]
         public async Task<IActionResult> RefreshAccessToken([FromBody] RefreshTokenDto refreshTokenDto)
         {
             try

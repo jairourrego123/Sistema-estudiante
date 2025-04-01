@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import {jwtDecode} from 'jwt-decode';
-import { Tokens } from '../../models/tokens';
+import { AccessToken , AuthTokens } from '../../models/tokens';
 import { environment } from '../../../environments/environment';
 import { Usuario } from '../../models/usuario';
 
@@ -12,27 +12,34 @@ import { Usuario } from '../../models/usuario';
 })
 export class AuthService {
 
-  private apiUrl = environment.apiUrl;
+  private apiUrl = environment.apiUrl+"/auth";
 
   constructor(private http: HttpClient) {}
 
-  login(username: string, password: string): Observable<Tokens> {
-    return this.http.post<Tokens>(`${this.apiUrl}/login`, { email:username, password }).pipe(
+  login(username: string, password: string): Observable<AuthTokens> {
+    return this.http.post<AuthTokens>(`${this.apiUrl}/login`, { email:username, password }).pipe(
       tap(tokens => this.storeTokens(tokens))
     );
   }
 
+  refreshToken(token: string): Observable<AccessToken > {
+    return this.http.post<AccessToken >(`${this.apiUrl}/token/refresh`, { refreshToken: token });
+  }
   register(user: Usuario): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/registrar-usuario`, user);
   }
 
-  private storeTokens(tokens: Tokens): void {
+  private storeTokens(tokens: AuthTokens): void {
     localStorage.setItem('accessToken', tokens.accessToken);
     localStorage.setItem('refreshToken', tokens.refreshToken);
   }
 
   getAccessToken(): string | null {
+
     return localStorage.getItem('accessToken');
+  }
+  getRefreshToken(): string | null {
+    return localStorage.getItem('refreshToken');
   }
 
   logout(): void {
