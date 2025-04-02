@@ -25,7 +25,7 @@ public class AuthService : IAuthRepository
     public async Task<ResponseJwtDto> LoginAsync(LoginDto loginDto)
     {
         UsuarioDto usuario = await _usuarioRepository.ValidarCredenciales(loginDto)!;
-        return _jwtTokenRepository.GenerarTokens(usuario);
+        return _jwtTokenRepository.GenerarTokensAccesso(usuario);
 
     }
 
@@ -40,9 +40,16 @@ public class AuthService : IAuthRepository
         UsuarioDto usuario = await _usuarioRepository.ObtenerUsuarioPorEmailAsync(emailUsuario) ??
                              throw new UnauthorizedAccessException("Usuario no encontrado.");
 
-        return _jwtTokenRepository.GenerarTokens(usuario,false);
+        return _jwtTokenRepository.GenerarTokensAccesso(usuario,false);
     }
 
+    public async Task<string> EnviarEnlaceRestablecimientoContrasena(string email)
+    {
+        UsuarioDto? usuario = await _usuarioRepository.ObtenerUsuarioPorEmailAsync(email);
+        if (usuario == null) return null!;
+
+        return _jwtTokenRepository.GenerarTokenRestablecimientoContrasena(email)!;
 
 
+    }
 }
