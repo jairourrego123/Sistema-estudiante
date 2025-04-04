@@ -50,6 +50,5 @@ public class AuthService : IAuthRepository
 
         return _jwtTokenRepository.GenerarTokenRestablecimientoContrasena(email)!;
 
-
     }
 }
