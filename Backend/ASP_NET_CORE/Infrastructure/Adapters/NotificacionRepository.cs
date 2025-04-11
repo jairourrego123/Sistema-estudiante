@@ -24,14 +24,15 @@ public class NotificacionRepository
         smtpHost = _configuration["Email:SmtpHost"] ?? throw new ArgumentNullException(nameof(smtpHost));
         smtpPort = _configuration["Email:SmtpPort"] ?? throw new ArgumentNullException(nameof(smtpPort));
         usuario = _configuration["Email:Usuario"] ?? throw new ArgumentNullException(nameof(usuario));
-        contrasena = _configuration["Email:SmtpHost"] ?? throw new ArgumentNullException(nameof(contrasena));
+        contrasena = _configuration["Email:Contrasena"] ?? throw new ArgumentNullException(nameof(contrasena));
     }
+
     public async Task EnviarCorreoAsync(ParamatrosNotificacionDto paramatrosNotificacion)
     {
 
         SmtpClient smtpClient = new()
         {
-            Port = int.Parse(smtpHost),
+            Port = int.Parse(smtpPort),
             Credentials = new NetworkCredential(usuario, contrasena),
             EnableSsl = true
         };
