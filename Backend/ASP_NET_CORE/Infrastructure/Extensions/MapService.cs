@@ -1,4 +1,4 @@
-﻿using Application.Dtos.AuthDtos;
+﻿using Application.Dtos.Auth;
 using Infrastructure.DataSource.Configuracion.Identity;
 using System;
 using System.Collections.Generic;

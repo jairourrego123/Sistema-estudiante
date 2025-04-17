@@ -1,0 +1,25 @@
+<div class="container">
+
+  <div class="header">
+    <button mat-icon-button (click)="volver()">
+      <mat-icon class="icon" >arrow_back</mat-icon>
+    </button>
+    <h2>Recuperar contraseña</h2>
+    <p>Ingresa tu correo electrónico para enviarte un enlace de recuperación.</p>
+  </div>
+
+  <form (submit)="enviarCorreo()" [formGroup]="form" class="restablecer-form">
+    <mat-form-field appearance="outline">
+      <mat-icon matIconPrefix>mail</mat-icon>
+      <mat-label>Correo Electrónico</mat-label>
+
+      <input matInput [formControl]="form.controls.correo" />
+      <mat-error *ngIf="form.get('correo')?.hasError('required')">El correo es obligatorio</mat-error>
+      <mat-error *ngIf="form.get('correo')?.hasError('email')">Correo no válido</mat-error>
+    </mat-form-field>
+    <button  type="submit" class="boton-auth" [disabled]="form.invalid">Enviar</button>
+
+    <!-- <a mat-stroked-button routerLink="/generos">Cancelar</a> -->
+
+  </form>
+</div>

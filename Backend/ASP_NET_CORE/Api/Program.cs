@@ -1,3 +1,4 @@
+using Api.Filters;
 using Infrastructure.DataSource;
 using Infrastructure.DataSource.Configuracion.Identity;
 using Infrastructure.Extensions;
@@ -18,7 +19,10 @@ builder.Configuration.AddUserSecrets<Program>();
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<GlobalExceptionFilter>();
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

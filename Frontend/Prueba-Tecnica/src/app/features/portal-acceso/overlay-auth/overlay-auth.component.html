@@ -1,0 +1,24 @@
+<div class="container" [class.right-panel-active]="isRightPanelActive">
+    <div class="form-container registro-container">
+      <app-registro></app-registro>
+    </div>
+    <div class="form-container login-container">
+      <app-login (navegar)="cambiarVista($event)"></app-login>
+    </div>
+    <div class="overlay-container">
+      <div class="overlay">
+        <div class="overlay-panel overlay-left">
+          <h1>¡Bienvenido!</h1>
+            <p>¿Ya tienes una cuenta? Inicia sesión con tu información.</p>
+          <button  class="overlay-button" (click)="togglePanel(false)">Ingresar</button>
+        </div>
+        <div class="overlay-panel overlay-right">
+          <h1>¡Hola!</h1>
+            <p>¿Aún no tienes una cuenta? Regístrate para comenzar tu experiencia.</p>
+          <button   class="overlay-button" (click)="togglePanel(true)">Registrarse</button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  

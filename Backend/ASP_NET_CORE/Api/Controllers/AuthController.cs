@@ -1,122 +1,76 @@
-﻿using Application.Dtos.AuthDtos;
-using Application.Ports;
-using Application.UseCases.Auth;
+﻿using Application.Dtos.Auth;
+using Application.Ports.Repositorys;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-
 namespace Api.Controllers
 {
-    [Route("api/auth")]
+    
+    [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
         private readonly IAuthRepository _authService;
 
-        public AuthController(IAuthRepository authService) 
+        public AuthController(IAuthRepository authService)
         {
             _authService = authService;
         }
 
-        /// <summary>
-        /// Registra un nuevo usuario.
-        /// </summary>
-        [HttpPost("registrar-usuario")]
+        /// <summary>Registra un nuevo usuario.</summary>
+        [HttpPost("registro")]
         public async Task<IActionResult> RegistrarUsuario([FromBody] RegistroDto dto)
         {
-            try
-            {
-                await _authService.RegistrarUsuarioAsync(dto);
-                return Ok();
-            }
-            catch (Exception ex) {
-                return BadRequest(new { message = ex.Message });
-
-            }
-            
+            await _authService.RegistrarUsuarioAsync(dto);
+            return Created();
         }
 
-        /// <summary>
-        /// Inicia sesión y genera un token JWT.
-        /// </summary>
+        /// <summary>Inicia sesión y retorna token JWT.</summary>
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+        public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
-            try
-            {
-                ResponseJwtDto response = await _authService.LoginAsync(loginDto);
-                return Ok(response);
-
-            }
-            catch (Exception ex)
-            {
-                return Unauthorized(new { message = ex.Message });
-
-            }
-          
+            var response = await _authService.LoginAsync(dto);
+            return Ok(response);
         }
 
+        /// <summary>Refresca el token de acceso.</summary>
         [HttpPost("token/refresh")]
-        public async Task<IActionResult> RefreshAccessToken([FromBody] RefreshTokenDto refreshTokenDto)
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto dto)
         {
-            try
-            {
-                ResponseJwtDto responseJwt = await _authService.RefreshAccessTokenAsync(refreshTokenDto);
-                return Ok(responseJwt);
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return Unauthorized(new { message = ex.Message });
-            }
+            var token = await _authService.RefreshAccessTokenAsync(dto);
+            return Ok(token);
+        }
+
+        /// <summary>Genera un enlace de restablecimiento de contraseña y lo envía al correo.</summary>
+        [HttpPost("password/enlace-restablecimiento")]
+        public async Task<IActionResult> GenerarEnlaceRestablecimiento( [FromBody] BaseUsernameDto username)
+        {
+            await _authService.GenerarEnlaceRestablecimientoAsync(username.Email);
+            return Ok();
         }
 
 
-        //[HttpPost("refresh-token")]
-        //public IActionResult RefreshToken([FromBody] string refreshToken)
-        //{
-        //    var tokenHandler = new JwtSecurityTokenHandler();
-        //    var validationParameters = JwtConfigHelper.GetTokenValidationParameters(_configuration, isRefreshToken: true);
-
-        //    try
-        //    {
-        //        var principal = tokenHandler.ValidateToken(refreshToken, validationParameters, out SecurityToken validatedToken);
-        //        return principal;
-        //    }
-        //    catch
-        //    {
-        //        return null; 
-        //    }
-
-        //}
-
-        /// <summary>
-        /// Prueba de ruta protegida
-        /// </summary>
-        [Authorize]
-        [HttpGet("protected")]
-        public IActionResult ProtectedRoute()
+        [HttpPost("password/restablecer")]
+        public async Task<IActionResult> RestaurarContraseña(RestablecerContrasenaDto restablecerContrasenaDto)
         {
-            return Ok(new { message = "Acceso autorizado" });
+            await _authService.RestablecerContrasenaAsync(restablecerContrasenaDto);
+            return Ok();
         }
 
-        [HttpGet("test")]
-        public IActionResult TestAuth()
-        {
-            return Ok(new { User = User.Identity?.Name, IsAuthenticated = User.Identity?.IsAuthenticated });
-        }
 
+
+        /// <summary>Información del usuario autenticado.</summary>
         [Authorize]
         [HttpGet("debug-token")]
         public IActionResult DebugToken()
         {
             return Ok(new
             {
-                IsAuthenticated = User.Identity?.IsAuthenticated,
-                UserName = User.Identity?.Name,
+                Autenticado = User.Identity?.IsAuthenticated,
+                Usuario = User.Identity?.Name,
                 Claims = User.Claims.Select(c => new { c.Type, c.Value })
             });
         }
-
 
     }
 }

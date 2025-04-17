@@ -1,0 +1,13 @@
+<div class="container">
+    <ng-container [ngSwitch]="vistaActual">
+  
+    <app-overlay-auth *ngSwitchCase="VistaAccesoEnum.Login" (navegar)="cambiarVista($event)" ></app-overlay-auth>
+    <app-restablecer-contrasena *ngSwitchCase="VistaAccesoEnum.ForgotPassword" (navegar)="cambiarVista($event)"></app-restablecer-contrasena>
+    
+      <!-- <app-recuperar-clave *ngSwitchCase="VistaAccesoEnum.RecuperarClave" (navegar)="cambiarVista($event)"></app-recuperar-clave> -->
+  
+      <!-- <app-restablecer-clave *ngSwitchCase="VistaAccesoEnum.RestablecerClave" (navegar)="cambiarVista($event)"></app-restablecer-clave> -->
+  
+    </ng-container>
+  </div>
+  

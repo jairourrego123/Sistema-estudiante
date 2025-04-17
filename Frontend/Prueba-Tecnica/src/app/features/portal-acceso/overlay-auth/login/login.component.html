@@ -1,0 +1,29 @@
+<form [formGroup]="form" (ngSubmit)="login()" class="login-form">
+  
+  <h1>Iniciar sesión</h1>
+  <div>
+  <mat-form-field appearance="outline">
+    <mat-icon matIconPrefix>person</mat-icon>
+    <mat-label >Usuario</mat-label>
+
+    <input matInput formControlName="username" required>
+
+    <mat-error *ngIf="form.get('username')?.hasError('required')">
+      Usuario requerido
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-icon matIconPrefix>lock</mat-icon>
+    <mat-label>Contraseña</mat-label>
+
+    <input matInput type="password" formControlName="password" required>
+    <mat-error *ngIf="form.get('password')?.hasError('required')">
+      Contraseña requerida
+    </mat-error>
+  </mat-form-field>
+</div>
+  <button  class="boton-auth" [disabled]="form.invalid" type="submit">Iniciar sesión</button>
+
+  <a (click)="irARecuperarClave()" >¿Olvidaste tu contraseña?</a>
+</form>
