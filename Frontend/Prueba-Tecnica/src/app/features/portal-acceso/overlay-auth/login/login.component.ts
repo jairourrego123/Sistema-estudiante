@@ -6,12 +6,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { NgIf } from '@angular/common';
-import { VistaAccesoEnum } from '../../VistaAccesoEnum';
+import { VistaAccesoEnum } from '../../shared/enums/VistaAccesoEnum';
 import { MatIconModule } from '@angular/material/icon';
+import { PasswordInputComponent } from "../../shared/components/password-input/password-input.component";
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, MatIconModule,MatInputModule, MatButtonModule,NgIf],
+  imports: [ReactiveFormsModule, MatIconModule, MatInputModule, MatButtonModule, NgIf, PasswordInputComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -40,6 +41,6 @@ login(): void {
 }
 
 irARecuperarClave() {
-  this.navegar.emit(VistaAccesoEnum.ForgotPassword);
+  this.navegar.emit(VistaAccesoEnum.RestablecerClave);
 }
 }

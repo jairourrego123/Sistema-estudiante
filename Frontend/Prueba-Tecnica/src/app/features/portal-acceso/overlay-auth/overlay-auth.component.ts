@@ -1,12 +1,13 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { RegistroComponent } from "./registro/registro.component";
 import { LoginComponent } from "./login/login.component";
-import { VistaAccesoEnum } from '../VistaAccesoEnum';
+import { VistaAccesoEnum } from '../shared/enums/VistaAccesoEnum';
 import { MatButtonModule } from '@angular/material/button';
+import { LayoutComponent } from "../shared/components/layout/layout.component";
 
 @Component({
   selector: 'app-overlay-auth',
-  imports: [RegistroComponent, LoginComponent,MatButtonModule],
+  imports: [RegistroComponent, LoginComponent, MatButtonModule, LayoutComponent],
   templateUrl: './overlay-auth.component.html',
   styleUrl: './overlay-auth.component.css'
 })

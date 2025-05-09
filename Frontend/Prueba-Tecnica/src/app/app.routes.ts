@@ -1,13 +1,14 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './features/portal-acceso/overlay-auth/login/login.component';
-import { HomeComponent } from './features/home/home.component';
-import { AuthGuard } from './core/guards/auth.guard';
-import { RegistroComponent } from './features/portal-acceso/overlay-auth/registro/registro.component';
 import { PortalAccesoComponent } from './features/portal-acceso/portal-acceso.component';
-import { OverlayAuthComponent } from './features/portal-acceso/overlay-auth/overlay-auth.component';
+import { VistaAccesoEnum } from './features/portal-acceso/shared/enums/VistaAccesoEnum';
 
 export const routes: Routes =  [
-  {path:'portal-acceso', component: PortalAccesoComponent},
+  {path:'portal-acceso', component: PortalAccesoComponent,data: { vista: VistaAccesoEnum.Login }},
+  {
+    path: 'restablecer-contrasena',   
+    component:PortalAccesoComponent,
+    data: { vista: VistaAccesoEnum.NuevaClave },
+  },
   { path: '**', redirectTo: 'portal-acceso' }
 
 ];

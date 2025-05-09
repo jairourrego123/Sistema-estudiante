@@ -32,14 +32,10 @@
     </mat-error>
   </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-icon matIconPrefix>lock</mat-icon>
-    <mat-label>Contraseña</mat-label>
-    <input matInput type="password" formControlName="password" required>
-    <mat-error *ngIf="form.get('password')?.hasError('required')">
-      La contraseña es requerida
-    </mat-error>
-  </mat-form-field>
+  <app-password-input formControlName="password" label="Contraseña" autocomplete="new-password" [errorMessages]="{
+    required: 'Ingresa tu contraseña'
+  }">
+  </app-password-input>
 
   <button class="boton-auth" [disabled]="form.invalid" type="submit">Registrarse</button>
 </form>

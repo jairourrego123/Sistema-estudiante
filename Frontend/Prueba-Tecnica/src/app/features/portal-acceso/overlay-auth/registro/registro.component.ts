@@ -8,10 +8,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../../../core/adapters/auth.service';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { PasswordInputComponent } from "../../shared/components/password-input/password-input.component";
 
 @Component({
   selector: 'app-registro',
-  imports: [CommonModule,MatIconModule, ReactiveFormsModule, MatInputModule, MatButtonModule, MatCardModule],
+  imports: [CommonModule, MatIconModule, ReactiveFormsModule, MatInputModule, MatButtonModule, MatCardModule, PasswordInputComponent],
   templateUrl: './registro.component.html',
   styleUrl: './registro.component.css'
 })

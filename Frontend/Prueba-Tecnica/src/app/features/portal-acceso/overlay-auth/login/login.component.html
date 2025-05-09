@@ -13,15 +13,15 @@
     </mat-error>
   </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-icon matIconPrefix>lock</mat-icon>
-    <mat-label>Contraseña</mat-label>
+  <app-password-input 
+    formControlName="password"
+    label="Contraseña"
+    autocomplete="current-password"
+    [errorMessages]="{
+      required: 'Ingresa tu contraseña'
+    }">
+  </app-password-input>
 
-    <input matInput type="password" formControlName="password" required>
-    <mat-error *ngIf="form.get('password')?.hasError('required')">
-      Contraseña requerida
-    </mat-error>
-  </mat-form-field>
 </div>
   <button  class="boton-auth" [disabled]="form.invalid" type="submit">Iniciar sesión</button>
 

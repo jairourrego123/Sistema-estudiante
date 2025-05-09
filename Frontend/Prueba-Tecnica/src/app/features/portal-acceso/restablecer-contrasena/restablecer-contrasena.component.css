@@ -1,61 +1,13 @@
-.container{
-  /* position: relative; */
-  /* display: grid; */
-  /* grid-template-rows: 1fr 4fr; */
-  /* height: 100%; */
-  /* background-color: green; */
-  min-height: 80vmin;
-  display: grid;
-  margin: 0;
-  padding: 0;
-  grid-template-rows: 1fr 3fr;
-
-}
-.header button{
-  position: absolute;
-  left: 1rem;
-  top: 1rem;
-}
-.icon{
-  color: white;
-}
-.header {
-    background: linear-gradient(to right, #FF4B2B, #FF416C);
-    color: white;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    height: min-content;
-    max-height:33.3vmin ;
-    
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    position: relative;
-    padding-block: 1rem;
-  }
-  
-  h2, p {
-    text-align: center;
-    margin: 0.5rem;
-
-  }
-  mat-form-field {
-    width: 50%;
-  }
 .restablecer-form{
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* justify-content: space-evenly; */
   margin-top: 3rem;
   
-
 }
-
 
 form button{
   margin: 1.5rem;
   width: 50%;
-
-
 }
 

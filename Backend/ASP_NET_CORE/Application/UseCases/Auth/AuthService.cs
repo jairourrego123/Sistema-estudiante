@@ -46,7 +46,7 @@ public class AuthService : IAuthRepository
         string token = await _usuarioRepository.GenerarTokenRestablecimientoContrasena(email);
         string encodeToken = HttpUtility.UrlEncode(token);
         string encodedEmail = HttpUtility.UrlEncode(email);
-        string url = $"https://localhost:5001/api/auth/restablecer-contrasena?token={encodeToken}&email={encodedEmail}";
+        string url = $"https://localhost:4200/restablecer-contrasena?token={encodeToken}&email={encodedEmail}";
 
         await _notificacionRepository.EnviarNotificacionEmailAsync(new ParamatrosNotificacionDto
         {

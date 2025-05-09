@@ -1,0 +1,37 @@
+<app-layout>
+  <header header>
+    <app-header [titulo]="titulo" [descripcion]="descripcion" (navegar)="volver()"></app-header>
+  </header>
+  <main body>
+    <form [formGroup]="form" (ngSubmit)="cambiarClave()" class="nueva-contraseña-form">
+      <app-password-input 
+        formControlName="nuevaClave"
+        label="Nueva contraseña"
+        [minLength]="8"
+        autocomplete="new-password"
+        [errorMessages]="{
+          required: 'La contraseña es obligatoria',
+          minlength: 'Mínimo 8 caracteres'
+        }">
+      </app-password-input>
+
+      <app-password-input 
+        formControlName="confirmarClave"
+        label="Confirmar contraseña"
+        [minLength]="8"
+        autocomplete="new-password"
+        [errorMessages]="{
+          required: 'Confirma tu contraseña'
+        }">
+      </app-password-input>
+            <mat-error class="error-message" *ngIf="form.hasError('noCoincide') && form.touched">
+        Las contraseñas no coinciden
+      </mat-error>
+
+      <button type="submit" class="boton-auth" [disabled]="form.invalid || isLoading">
+        <span *ngIf="!isLoading">Cambiar contraseña</span>
+        <mat-spinner *ngIf="isLoading" diameter="24"></mat-spinner>
+      </button>
+    </form>
+  </main>
+</app-layout>

@@ -29,6 +29,14 @@ export class AuthService {
     return this.http.post<void>(`${this.apiUrl}/registrar-usuario`, user);
   }
 
+  generarEnlaceRestablecimiento(email : string):Observable<void>{
+    return this.http.post<void>(`${this.apiUrl}/password/enlace-restablecimiento`,{email})
+    }
+  
+  restablecerContraseña(email:string,token:string,nuevaContrasena:string):Observable<void>{
+    return this.http.post<void>(`${this.apiUrl}/password/restablecer`,{email,token,nuevaContrasena})
+  }
+    
   private storeTokens(tokens: AuthTokens): void {
     localStorage.setItem('accessToken', tokens.accessToken);
     localStorage.setItem('refreshToken', tokens.refreshToken);

@@ -18,7 +18,7 @@ namespace Api.Controllers
         }
 
         /// <summary>Registra un nuevo usuario.</summary>
-        [HttpPost("registro")]
+        [HttpPost("registrar-usuario")]
         public async Task<IActionResult> RegistrarUsuario([FromBody] RegistroDto dto)
         {
             await _authService.RegistrarUsuarioAsync(dto);
