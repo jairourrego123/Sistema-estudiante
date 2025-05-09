@@ -70,7 +70,7 @@ public class JwtTokenRepository : IJwtTokenRepository
         SecurityTokenDescriptor refreshTokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(refreshClaims),
-            Expires = DateTime.UtcNow.AddMinutes(int.Parse(ExpirationDaysRefresh)),
+            Expires = DateTime.UtcNow.AddDays(int.Parse(ExpirationDaysRefresh)),
             SigningCredentials = credentials,
             Issuer = _configuration["Jwt:Issuer"],
             Audience = _configuration["Jwt:Audience"]

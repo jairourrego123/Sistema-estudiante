@@ -2,7 +2,9 @@
 using Application.Dtos.Notificacion;
 using Application.Ports.Repositorys;
 using Application.Ports.Services;
+using System.Text;
 using System.Web;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace Application.UseCases.Auth;
 
@@ -44,16 +46,17 @@ public class AuthService : IAuthRepository
     {
 
         string token = await _usuarioRepository.GenerarTokenRestablecimientoContrasena(email);
-        string encodeToken = HttpUtility.UrlEncode(token);
         string encodedEmail = HttpUtility.UrlEncode(email);
-        string url = $"https://localhost:4200/restablecer-contrasena?token={encodeToken}&email={encodedEmail}";
+        string tokenForUrl = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
 
-        await _notificacionRepository.EnviarNotificacionEmailAsync(new ParamatrosNotificacionDto
-        {
-            Destinatario = email,
-            Asunto = "Restablecimiento de contraseña",
-            Mensaje = $"<p>Para restablecer tu contraseña, haz clic en el siguiente enlace:</p><a href='{url}'>Restablecer contraseña</a>"
-        });
+        string url = $"http://localhost:4200/restablecer-contrasena?token={tokenForUrl}&email={encodedEmail}";
+
+        //await _notificacionRepository.EnviarNotificacionEmailAsync(new ParamatrosNotificacionDto
+        //{
+        //    Destinatario = email,
+        //    Asunto = "Restablecimiento de contraseña",
+        //    Mensaje = $"<p>Para restablecer tu contraseña, haz clic en el siguiente enlace:</p><a href='{url}'>Restablecer contraseña</a>"
+        //});
 
         return url;
 
@@ -61,7 +64,9 @@ public class AuthService : IAuthRepository
 
     public async Task RestablecerContrasenaAsync(RestablecerContrasenaDto restablecerContrasena)
     {
-        restablecerContrasena.Token = HttpUtility.UrlDecode(restablecerContrasena.Token);
+            
+        //var decodedBytes = WebEncoders.Base64UrlDecode(restablecerContrasena.Token);  
+        restablecerContrasena.Token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(restablecerContrasena.Token));
         await _usuarioRepository.RestablecerContrasena(restablecerContrasena);
     }
 }

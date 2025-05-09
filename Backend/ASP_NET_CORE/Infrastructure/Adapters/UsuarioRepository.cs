@@ -7,7 +7,9 @@ using Infrastructure.Adapters.GenericRepository;
 using Infrastructure.DataSource.Configuracion.Identity;
 using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Shared.Resources;
+using System.Text;
 using System.Web;
 
 namespace Infrastructure.Adapters;
@@ -85,8 +87,9 @@ public class UsuarioRepository : IUsuarioRepository
         UsuarioIdentity usuario = await _userManager.FindByEmailAsync(email) 
             ?? throw new BusinessException(Messages.UsuarioNoEncontrado);
         string token = await _userManager.GeneratePasswordResetTokenAsync(usuario);
+        string tokenCodificado = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
 
-        return token;
+        return tokenCodificado;
     }
 
     /// <summary>
@@ -96,14 +99,30 @@ public class UsuarioRepository : IUsuarioRepository
     /// <exception cref="BusinessException">Excepcion en caso de que el usuario no exista o presente o la informacion suministrada en el objeto sea incorrecta</exception>
     public async Task  RestablecerContrasena(RestablecerContrasenaDto restablecerContrasena)
     {
-        UsuarioIdentity usuario = await _userManager.FindByEmailAsync(restablecerContrasena.Email) 
+        try
+        {
+            UsuarioIdentity usuario = await _userManager.FindByEmailAsync(restablecerContrasena.Email)
             ?? throw new BusinessException(Messages.UsuarioNoEncontrado);
 
-        IdentityResult resultado = await _userManager.ResetPasswordAsync(usuario, restablecerContrasena.Token, restablecerContrasena.NuevaContrasena);
-        if (!resultado.Succeeded)
+            string tokenDecodificado = Encoding.UTF8.GetString(
+                WebEncoders.Base64UrlDecode(restablecerContrasena.Token)
+            );
+            IdentityResult resultado = await _userManager.ResetPasswordAsync(usuario, tokenDecodificado, restablecerContrasena.NuevaContrasena);
+            if (!resultado.Succeeded)
+            {
+                string errores = string.Join(", ", resultado.Errors.Select(e => e.Description));
+                throw new BusinessException(errores);
+            }
+        }
+        catch (FormatException ex)
         {
-            string errores = string.Join(", ", resultado.Errors.Select(e => e.Description));
-            throw new BusinessException(errores);
+            // Manejar errores de formato en la decodificación
+            throw new BusinessException($"Token inválido: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            // Otros errores inesperados
+            throw new BusinessException($"Error al restablecer contraseña: {ex.Message}");
         }
     } 
 

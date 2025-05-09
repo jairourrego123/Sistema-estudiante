@@ -36,8 +36,8 @@ export class RestablecerContrasenaComponent {
 
   
   enviarCorreo(){
-    const { correo } = this.form.value;
-    this.authService.generarEnlaceRestablecimiento(correo).subscribe({
+    const { email } = this.form.value;
+    this.authService.generarEnlaceRestablecimiento(email).subscribe({
       next: () =>  this.volver(),
       error: (error) => console.error('Error de autenticación:', error)
     });
