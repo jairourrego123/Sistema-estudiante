@@ -1,6 +1,6 @@
 ﻿namespace Application.Dtos.Auth;
 
-public class LoginDto: BaseUsernameDto
+public class LoginDto: BaseUsername
 {
     public required string Password { get; set; }
 }

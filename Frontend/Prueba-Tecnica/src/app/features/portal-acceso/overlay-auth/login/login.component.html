@@ -13,14 +13,14 @@
     </mat-error>
   </mat-form-field>
 
-  <app-password-input 
-    formControlName="password"
-    label="Contraseña"
-    autocomplete="current-password"
-    [errorMessages]="{
-      required: 'Ingresa tu contraseña'
-    }">
-  </app-password-input>
+  <app-password-input
+  formControlName="password"
+  [errorMessages]="{
+    required: 'Ingresa la contraseña',
+  }"
+  label="Contraseña"
+  autocomplete="password">
+</app-password-input>
 
 </div>
   <button  class="boton-auth" [disabled]="form.invalid" type="submit">Iniciar sesión</button>

@@ -61,6 +61,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a No se encontro el archivo {0} .
+        /// </summary>
+        public static string ArchivoNoEncontrado {
+            get {
+                return ResourceManager.GetString("ArchivoNoEncontrado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Las credenciales proporcionadas son incorrectas.
         /// </summary>
         public static string CredencialesInvalidas {

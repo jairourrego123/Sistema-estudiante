@@ -2,13 +2,15 @@ import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { VistaAccesoEnum } from '../shared/enums/VistaAccesoEnum';
 import { MatButtonModule } from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field'
 import { NgIf} from '@angular/common';
 import { HeaderComponent } from "../shared/components/header/header.component";
 import { LayoutComponent } from "../shared/components/layout/layout.component";
 import { AuthService } from '../../../core/adapters/auth.service';
+import { EmailValidator } from '../../../core/validators/emailvalidator';
+
 @Component({
   selector: 'app-restablecer-contrasena',
   imports: [NgIf, MatIconModule, MatInputModule, MatButtonModule, ReactiveFormsModule, MatFormFieldModule, HeaderComponent, LayoutComponent],
@@ -25,7 +27,7 @@ export class RestablecerContrasenaComponent {
 
   constructor(private fb: FormBuilder, private authService: AuthService) {
     this.form = this.fb.group({
-      email: ['', [Validators.required,Validators.email]]
+      email: ['', [Validators.required,EmailValidator.validEmail()]]
     });
   }
   

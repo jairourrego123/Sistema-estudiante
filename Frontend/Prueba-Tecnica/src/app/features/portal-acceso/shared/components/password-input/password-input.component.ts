@@ -1,18 +1,30 @@
-import { Component, Input, OnInit, forwardRef, OnDestroy } from '@angular/core';
-import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule, NgControl } from '@angular/forms';
+import {
+  Component,
+  Input,
+  OnInit,
+  Optional,
+  Self,
+  forwardRef
+} from '@angular/core';
+import {
+  ControlValueAccessor,
+  NgControl,
+  NG_VALUE_ACCESSOR,
+  ReactiveFormsModule,
+  FormControl
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-password-input',
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
+    ReactiveFormsModule, // 👈 esto es clave
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
@@ -20,63 +32,62 @@ import { Subscription } from 'rxjs';
   ],
   templateUrl: './password-input.component.html',
   styleUrls: ['./password-input.component.css'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => PasswordInputComponent),
-      multi: true
-    }
-  ]
+  
 })
-export class PasswordInputComponent implements OnInit, OnDestroy, ControlValueAccessor {
+export class PasswordInputComponent implements OnInit, ControlValueAccessor {
   @Input() label: string = 'Contraseña';
   @Input() placeholder: string = '';
   @Input() minLength: number = 8;
+
   @Input() errorMessages: { [key: string]: string } = {
     required: 'Este campo es obligatorio',
-    minlength: `Mínimo ${this.minLength} caracteres`
+    minlength: 'Mínimo 8 caracteres',
   };
+
   @Input() appearance: 'outline' | 'fill' | 'standard' = 'outline';
   @Input() autocomplete: string = 'current-password';
 
-  hidePassword: boolean = true;
-  innerControl = new FormControl('');
-  disabled: boolean = false;
-  touched: boolean = false;
-  parentErrors: any = null;
-  
-  private valueChanges?: Subscription;
+  hidePassword = true;
+  touched = false;
 
-  onChange: any = () => {};
-  onTouched: any = () => {};
+  onChange = (_: any) => {};
+  onTouched = () => {};
 
-  constructor() {}
+  constructor(@Optional() @Self() public ngControl: NgControl) {
+    if (ngControl) {
+      ngControl.valueAccessor = this;
+    }
+  }
 
   ngOnInit(): void {
-    // Actualiza el mensaje de minlength cuando cambia el valor
     this.errorMessages['minlength'] = `Mínimo ${this.minLength} caracteres`;
-    
-    this.valueChanges = this.innerControl.valueChanges.subscribe(value => {
-      this.onChange(value);
-    });
+  }
+
+  get control(): FormControl {
+    return this.ngControl?.control as FormControl;
   }
   
-  ngOnDestroy(): void {
-    if (this.valueChanges) {
-      this.valueChanges.unsubscribe();
-    }
+
+  get showError(): boolean {
+    return this.control?.invalid && (this.control?.touched || this.touched);
   }
 
-  toggleVisibility(): void {
-    this.hidePassword = !this.hidePassword;
+  get errorMessage(): string {
+    const errors = this.control?.errors || {};
+
+    for (const key in errors) {
+      if (this.errorMessages[key]) {
+        return this.errorMessages[key];
+      }
+      if (typeof errors[key] === 'object' && errors[key]?.message) {
+        return errors[key].message;
+      }
+    }
+
+    return 'Error de validación';
   }
 
-  // ControlValueAccessor interface
-  writeValue(value: any): void {
-    if (value !== undefined) {
-      this.innerControl.setValue(value, { emitEvent: false });
-    }
-  }
+  writeValue(value: any): void {}
 
   registerOnChange(fn: any): void {
     this.onChange = fn;
@@ -86,49 +97,14 @@ export class PasswordInputComponent implements OnInit, OnDestroy, ControlValueAc
     this.onTouched = fn;
   }
 
-  setDisabledState?(isDisabled: boolean): void {
-    this.disabled = isDisabled;
-    if (isDisabled) {
-      this.innerControl.disable({ emitEvent: false });
-    } else {
-      this.innerControl.enable({ emitEvent: false });
-    }
-  }
+  setDisabledState?(isDisabled: boolean): void {}
 
   onBlur(): void {
-    if (!this.touched) {
-      this.touched = true;
-      this.onTouched();
-    }
+    this.touched = true;
+    this.onTouched();
   }
 
-  get showError(): boolean {
-    return (this.innerControl.invalid || this.parentErrors) && this.touched;
-  }
-
-  get errorMessage(): string {
-    if (this.innerControl.errors) {
-      for (const errorKey in this.innerControl.errors) {
-        if (this.errorMessages[errorKey]) {
-          return this.errorMessages[errorKey];
-        }
-      }
-    }
-    
-    // Luego revisar errores del padre (como required)
-    if (this.parentErrors) {
-      for (const errorKey in this.parentErrors) {
-        if (this.errorMessages[errorKey]) {
-          return this.errorMessages[errorKey];
-        }
-      }
-    }
-    
-    return 'Error de validación';
-  }
-  
-  // Método para actualizar los errores del control padre
-  updateErrors(errors: any): void {
-    this.parentErrors = errors;
+  toggleVisibility(): void {
+    this.hidePassword = !this.hidePassword;
   }
 }

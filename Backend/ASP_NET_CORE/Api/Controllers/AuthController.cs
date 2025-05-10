@@ -43,7 +43,7 @@ namespace Api.Controllers
 
         /// <summary>Genera un enlace de restablecimiento de contraseña y lo envía al correo.</summary>
         [HttpPost("password/enlace-restablecimiento")]
-        public async Task<IActionResult> GenerarEnlaceRestablecimiento( [FromBody] BaseUsernameDto username)
+        public async Task<IActionResult> GenerarEnlaceRestablecimiento( [FromBody] BaseUsername username)
         {
             await _authService.GenerarEnlaceRestablecimientoAsync(username.Email);
             return Ok();

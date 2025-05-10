@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Const\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="Resources\Messages.Designer.cs">
       <DependentUpon>Messages.resx</DependentUpon>
       <DesignTime>True</DesignTime>

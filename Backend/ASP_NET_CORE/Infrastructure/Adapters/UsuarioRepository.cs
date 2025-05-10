@@ -116,12 +116,10 @@ public class UsuarioRepository : IUsuarioRepository
         }
         catch (FormatException ex)
         {
-            // Manejar errores de formato en la decodificación
             throw new BusinessException($"Token inválido: {ex.Message}");
         }
         catch (Exception ex)
         {
-            // Otros errores inesperados
             throw new BusinessException($"Error al restablecer contraseña: {ex.Message}");
         }
     } 

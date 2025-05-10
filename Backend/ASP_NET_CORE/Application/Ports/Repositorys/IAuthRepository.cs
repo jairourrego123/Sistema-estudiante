@@ -6,7 +6,7 @@ public interface IAuthRepository
     Task RegistrarUsuarioAsync(RegistroDto dto);
     Task<ResponseJwtDto> LoginAsync(LoginDto dto);
     Task<ResponseJwtDto> RefreshAccessTokenAsync(RefreshTokenDto refreshToken);
-    Task<string> GenerarEnlaceRestablecimientoAsync(string email);
+    Task GenerarEnlaceRestablecimientoAsync(string email);
     Task RestablecerContrasenaAsync(RestablecerContrasenaDto restablecerContrasena);
 
 }

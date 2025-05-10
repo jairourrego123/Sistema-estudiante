@@ -1,6 +1,6 @@
 ﻿namespace Application.Dtos.Auth;
 
-public class UsuarioDto: BaseUsernameDto
+public class UsuarioDto: BaseUsername
 {
     public Guid Id { get; set; }
     public string Nombre { get; set; } = string.Empty;

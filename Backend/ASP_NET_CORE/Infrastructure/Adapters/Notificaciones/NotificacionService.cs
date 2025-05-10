@@ -5,21 +5,23 @@ using Application.Dtos.Notificacion;
 using Infrastructure.Adapters.GenericRepository;
 using Application.Ports.Services;
 
-namespace Infrastructure.Adapters;
+namespace Infrastructure.Adapters.Notificaciones;
 
 [Repository]
-public class NotificacionRepository : INotificacionService
+public class NotificacionService : INotificacionService
 {
     private readonly IConfiguration _configuration;
+    private readonly IEmailTemplateService _emailTemplateService;
     private string smtpHost;
     private string smtpPort;
     private string usuario;
     private string remitente;
     private string contrasena;
 
-    public NotificacionRepository(IConfiguration configuration)
+    public NotificacionService(IConfiguration configuration, IEmailTemplateService emailTemplateService)
     {
         _configuration = configuration;
+        _emailTemplateService = emailTemplateService;
         ObtenerParametrosIniciales(configuration);
     }
 
@@ -35,6 +37,7 @@ public class NotificacionRepository : INotificacionService
     public async Task EnviarNotificacionEmailAsync(ParamatrosNotificacionDto paramatrosNotificacion)
     {
 
+
         SmtpClient smtpClient = new()
         {
             Host = smtpHost, 
@@ -43,12 +46,13 @@ public class NotificacionRepository : INotificacionService
             EnableSsl = true
         };
 
+        string mensaje = _emailTemplateService.RenderizarPlantilla(paramatrosNotificacion.Plantilla, paramatrosNotificacion.Parametros);
 
         MailMessage mailMessage = new()
         {
             From = new MailAddress(remitente),
             Subject = paramatrosNotificacion.Asunto,
-            Body = paramatrosNotificacion.Mensaje,
+            Body = mensaje,
             IsBodyHtml = true
         };
         mailMessage.To.Add(paramatrosNotificacion.Destinatario);

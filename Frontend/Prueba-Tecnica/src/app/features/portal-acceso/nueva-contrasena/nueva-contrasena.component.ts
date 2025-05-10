@@ -14,6 +14,7 @@ import { VistaAccesoEnum } from '../shared/enums/VistaAccesoEnum';
 import { LayoutComponent } from "../shared/components/layout/layout.component";
 import { PasswordInputComponent } from "../shared/components/password-input/password-input.component";
 import { AuthService } from '../../../core/adapters/auth.service';
+import { PasswordValidator } from '../../../core/validators/password.validator';
 
 @Component({
   selector: 'app-nueva-contrasena',
@@ -104,8 +105,8 @@ export class NuevaContrasenaComponent implements OnInit {
 
   private formulario(): FormGroup {
     const formGroup = this.fb.group({
-      nuevaClave: ['', [Validators.required, Validators.minLength(8)]],
-      confirmarClave: ['', Validators.required]
+      nuevaClave: ['', [Validators.required, PasswordValidator.strongPassword()]],
+      confirmarClave: ['', PasswordValidator.strongPassword()]
     });
     
     formGroup.setValidators(this.validarMatchClaves);

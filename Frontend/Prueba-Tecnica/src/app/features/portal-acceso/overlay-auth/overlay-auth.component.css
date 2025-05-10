@@ -136,12 +136,14 @@
  
   @media (max-width: 768px) {
     .container {
-      width: 100%;
-      height: auto;
-      flex-direction: column;
+      display: grid; 
+      /* height: 100dvh; */
+      grid-template-columns: 1fr;
+      width: 100%; 
+
     }
-  
-    .form-container,
+    .overlay-righ{}
+    /* .form-container,
     .overlay-container,
     .overlay {
       width: 100%;
@@ -154,6 +156,6 @@
   
     .overlay-panel {
       display: none;
-    }
+    } */
   }
   

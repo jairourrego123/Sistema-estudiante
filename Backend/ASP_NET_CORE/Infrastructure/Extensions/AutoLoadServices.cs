@@ -1,6 +1,8 @@
 ﻿using Application.Ports.Repositorys;
+using Application.Ports.Services;
 using Application.UseCases.Auth;
 using Infrastructure.Adapters.GenericRepository;
+using Infrastructure.Adapters.Notificaciones;
 using Infrastructure.DataSource;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,7 +13,8 @@ namespace Infrastructure.Extensions
         public static IServiceCollection AddDomainServices(this IServiceCollection services)
         {
             services.AddSingleton<ISqlConnectionContext, DapperContext>();
-            services.AddScoped<IAuthRepository, AuthService>(); 
+            services.AddScoped<IAuthRepository, AuthService>();
+            services.AddScoped<IEmailTemplateService, EmailTemplateService>();
 
 
             IEnumerable<Type> repositories = AppDomain.CurrentDomain.GetAssemblies()

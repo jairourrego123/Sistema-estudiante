@@ -9,6 +9,7 @@ import { NgIf } from '@angular/common';
 import { VistaAccesoEnum } from '../../shared/enums/VistaAccesoEnum';
 import { MatIconModule } from '@angular/material/icon';
 import { PasswordInputComponent } from "../../shared/components/password-input/password-input.component";
+import { PasswordValidator } from '../../../../core/validators/password.validator';
 
 @Component({
   selector: 'app-login',
@@ -26,7 +27,8 @@ export class LoginComponent {
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.form = this.fb.group({
       username: ['', Validators.required],
-      password: ['', Validators.required]
+      password: ['',[Validators.required]]
+
     });
   }
 

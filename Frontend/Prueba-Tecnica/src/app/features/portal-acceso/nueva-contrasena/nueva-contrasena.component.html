@@ -4,6 +4,7 @@
   </header>
   <main body>
     <form [formGroup]="form" (ngSubmit)="cambiarClave()" class="nueva-contraseña-form">
+      
       <app-password-input 
         formControlName="nuevaClave"
         label="Nueva contraseña"
@@ -24,9 +25,7 @@
           required: 'Confirma tu contraseña'
         }">
       </app-password-input>
-            <mat-error class="error-message" *ngIf="form.hasError('noCoincide') && form.touched">
-        Las contraseñas no coinciden
-      </mat-error>
+    
 
       <button type="submit" class="boton-auth" [disabled]="form.invalid || isLoading">
         <span *ngIf="!isLoading">Cambiar contraseña</span>

@@ -32,10 +32,18 @@
     </mat-error>
   </mat-form-field>
 
-  <app-password-input formControlName="password" label="Contraseña" autocomplete="new-password" [errorMessages]="{
-    required: 'Ingresa tu contraseña'
-  }">
-  </app-password-input>
+  <app-password-input
+  formControlName="password"
+  [errorMessages]="{
+    required: 'La contraseña es obligatoria',
+    strongPassword: 'Debe tener al menos una mayúscula y un número'
+  }"
+  label="Contraseña"
+  autocomplete="new-password">
+</app-password-input>
 
+  <!-- <mat-error *ngIf="form.get('password')?.hasError('strongPassword')">
+    {{ form.get('password')?.getError('strongPassword').message }}
+  </mat-error> -->
   <button class="boton-auth" [disabled]="form.invalid" type="submit">Registrarse</button>
 </form>
