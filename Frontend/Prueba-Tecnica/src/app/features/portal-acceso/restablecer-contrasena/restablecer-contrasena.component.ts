@@ -10,6 +10,7 @@ import { HeaderComponent } from "../shared/components/header/header.component";
 import { LayoutComponent } from "../shared/components/layout/layout.component";
 import { AuthService } from '../../../core/adapters/auth.service';
 import { EmailValidator } from '../../../core/validators/emailvalidator';
+import { SwalService } from '../../../core/adapters/alert.service';
 
 @Component({
   selector: 'app-restablecer-contrasena',
@@ -25,7 +26,7 @@ export class RestablecerContrasenaComponent {
   descripcion = "Ingresa tu correo electrónico para enviarte un enlace de recuperación."
   form: FormGroup;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor( private swalService: SwalService ,private fb: FormBuilder, private authService: AuthService) {
     this.form = this.fb.group({
       email: ['', [Validators.required,EmailValidator.validEmail()]]
     });
@@ -40,9 +41,17 @@ export class RestablecerContrasenaComponent {
   enviarCorreo(){
     const { email } = this.form.value;
     this.authService.generarEnlaceRestablecimiento(email).subscribe({
-      next: () =>  this.volver(),
-      error: (error) => console.error('Error de autenticación:', error)
-    });
+      next: () =>  {
+        this.form.reset()
+        this.swalService.showAlert({
+          icon: 'success',
+          title:'!Enviado!',
+          text:'Revisa la bandeja de tu correo electronico e ingresa al enlace que te enviamos.',
+        })
+        return this.volver();
+      },
+      error: err => this.swalService.showError(err.error.message)
+  })
   }
   
 }

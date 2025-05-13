@@ -16,9 +16,6 @@ export const AuthInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
       if (err.status === 401 && token) {
         return authService.refreshToken(token).pipe(
 
-          // SwitchMap es un operador de transformacion de observaciones
-          // Cancela la suscripcion anterior y ejecuta una nueva llamada basa en el resultado anterior 
-          // Devuelve el observabe mas reciente  
           switchMap(newToken => { 
             const newReq = req.clone({
               setHeaders: {

@@ -10,6 +10,7 @@ import { VistaAccesoEnum } from '../../shared/enums/VistaAccesoEnum';
 import { MatIconModule } from '@angular/material/icon';
 import { PasswordInputComponent } from "../../shared/components/password-input/password-input.component";
 import { PasswordValidator } from '../../../../core/validators/password.validator';
+import { SwalService } from '../../../../core/adapters/alert.service';
 
 @Component({
   selector: 'app-login',
@@ -24,7 +25,7 @@ export class LoginComponent {
 
   form: FormGroup;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+  constructor(private swalService: SwalService,private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.form = this.fb.group({
       username: ['', Validators.required],
       password: ['',[Validators.required]]
@@ -38,8 +39,7 @@ login(): void {
     const { username, password } = this.form.value;
     this.authService.login(username, password).subscribe({
       next: () =>  this.router.navigate(['/home']),
-      error: (error) => console.error('Error de autenticación:', error)
-    });
+      error: err => this.swalService.showError(err.error.message)    });
 }
 
 irARecuperarClave() {

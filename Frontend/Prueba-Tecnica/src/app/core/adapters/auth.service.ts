@@ -1,58 +1,100 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import {jwtDecode} from 'jwt-decode';
-import { AccessToken , AuthTokens } from '../../models/tokens';
+import { AccessToken, AuthTokens } from '../../models/tokens';
 import { environment } from '../../../environments/environment';
 import { Usuario } from '../../models/usuario';
+
+interface DecodedToken {
+  nameid: string;       
+  email: string;
+  given_name: string;   
+  family_name: string;  
+  nbf: number;
+  exp: number;
+  iat: number;
+  iss: string;
+  aud: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private apiUrl = `${environment.apiUrlAutenticacion}/auth`;
 
-  private apiUrl = environment.apiUrl+"/auth";
+  private userSubject = new BehaviorSubject<DecodedToken | null>(null);
+  user$ = this.userSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.loadUserFromToken();
+  }
 
   login(username: string, password: string): Observable<AuthTokens> {
-    return this.http.post<AuthTokens>(`${this.apiUrl}/login`, { email:username, password }).pipe(
-      tap(tokens => this.storeTokens(tokens))
-    );
+    return this.http.post<AuthTokens>(`${this.apiUrl}/login`, { email: username, password })
+      .pipe(
+        tap(tokens => {
+          this.storeTokens(tokens);
+          this.updateUserFromToken(tokens.accessToken);
+        })
+      );
   }
 
-  refreshToken(token: string): Observable<AccessToken > {
-    return this.http.post<AccessToken >(`${this.apiUrl}/token/refresh`, { refreshToken: token });
+  refreshToken(token: string): Observable<AccessToken> {
+    return this.http.post<AccessToken>(`${this.apiUrl}/token/refresh`, { refreshToken: token });
   }
+
   register(user: Usuario): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/registrar-usuario`, user);
   }
 
-  generarEnlaceRestablecimiento(email : string):Observable<void>{
-    return this.http.post<void>(`${this.apiUrl}/password/enlace-restablecimiento`,{email})
-    }
-  
-  restablecerContraseña(email:string,token:string,nuevaContrasena:string):Observable<void>{
-    return this.http.post<void>(`${this.apiUrl}/password/restablecer`,{email,token,nuevaContrasena})
+  generarEnlaceRestablecimiento(email: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/password/enlace-restablecimiento`, { email });
   }
-    
+
+  restablecerContraseña(email: string, token: string, nuevaContrasena: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/password/restablecer`, { email, token, nuevaContrasena });
+  }
+
   private storeTokens(tokens: AuthTokens): void {
     localStorage.setItem('accessToken', tokens.accessToken);
     localStorage.setItem('refreshToken', tokens.refreshToken);
   }
 
-  getAccessToken(): string | null {
-
+  public getAccessToken(): string | null {
     return localStorage.getItem('accessToken');
   }
-  getRefreshToken(): string | null {
-    return localStorage.getItem('refreshToken');
+
+  private loadUserFromToken(): void {
+    const token = this.getAccessToken();
+    if (token) this.updateUserFromToken(token);
+  }
+
+  private updateUserFromToken(token: string): void {
+    try {
+      const decoded = jwtDecode<DecodedToken>(token);
+      this.userSubject.next(decoded);
+    } catch (err) {
+      console.error('Error al decodificar el token:', err);
+      this.userSubject.next(null);
+    }
+  }
+
+  getUserId(): string | null {
+    return this.userSubject.value?.nameid ?? null;
+  }
+
+  getUserFullName(): string | null {
+    const u = this.userSubject.value;
+    return u ? `${u.given_name.trim()} ${u.family_name.trim()}`.trim() : null;
   }
 
   logout(): void {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    this.userSubject.next(null);
   }
 
   isAuthenticated(): boolean {
@@ -60,8 +102,8 @@ export class AuthService {
     if (!token) return false;
 
     try {
-      const decoded: any = jwtDecode(token);
-      return decoded && decoded.exp > (Date.now() / 1000);
+      const decoded = jwtDecode<DecodedToken>(token);
+      return decoded.exp > (Date.now() / 1000);
     } catch (error) {
       console.error('Error al decodificar el token:', error);
       return false;

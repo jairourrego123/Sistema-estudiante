@@ -2,7 +2,7 @@
   <main body>
     <div class="container" [class.right-panel-active]="isRightPanelActive">
       <div class="form-container registro-container">
-        <app-registro></app-registro>
+        <app-registro [activarPanel]="togglePanel.bind(this)"></app-registro>
       </div>
       <div class="form-container login-container">
         <app-login (navegar)="cambiarVista($event)"></app-login>
