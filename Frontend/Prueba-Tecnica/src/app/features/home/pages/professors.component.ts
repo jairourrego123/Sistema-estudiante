@@ -33,7 +33,7 @@ import { SwalService } from '../../../core/adapters/alert.service';
     <div class="page-container">
       <div class="page-header">
         <h1>Profesores</h1>
-        <button mat-flat-button color="primary" (click)="openProfessorForm()">
+        <button mat-flat-button color="primary" class="button-add" (click)="openProfessorForm()">
           <mat-icon>add</mat-icon>
           Nuevo Profesor
         </button>
@@ -55,6 +55,9 @@ import { SwalService } from '../../../core/adapters/alert.service';
     </div>
   `,
   styles: [`
+    .button-add{
+      background-color:#1abc9c !important
+    }
     .page-container {
       padding: 24px;
       width: 100%;
@@ -102,9 +105,8 @@ export class ProfessorsComponent implements OnInit {
         this.professors = data;
         this.totalStudents = data.length
       },
-      error: (err: any) => {
-         alert(err.error)
-      }
+      error: err => this.swalService.showError(err.error.message)
+
     });
   }
 

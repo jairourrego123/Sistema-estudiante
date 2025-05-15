@@ -28,20 +28,21 @@ public class UsuarioRepository : IUsuarioRepository
     /// </summary>
     /// <param name="registroDto">Objeto del tipo RegistroDto con catos basicos de registro</param>
     /// <exception cref="BusinessException">Excepcion en caso de que el usuario exista </exception>
-    public async Task CrearUsuarioAsync(RegistroDto registroDto)
+    public async Task<string> CrearUsuarioAsync(RegistroDto registroDto)
     {
         UsuarioIdentity? usuario = await _userManager.FindByEmailAsync(registroDto.Email);
         if (usuario != null) throw new BusinessException(Messages.UsuarioExistente);
 
         usuario = MapService.MapRegistroUsuarioDtoToUsuarioIdentity(registroDto);
         IdentityResult resultado = await _userManager.CreateAsync(usuario, registroDto.Password);
-
         if (!resultado.Succeeded)
         {
             string errores = string.Join(", ", resultado.Errors.Select(e => e.Description));
             throw new BusinessException(errores);
             
         }
+        return usuario.Id.ToString();
+
     }
 
     /// <summary>

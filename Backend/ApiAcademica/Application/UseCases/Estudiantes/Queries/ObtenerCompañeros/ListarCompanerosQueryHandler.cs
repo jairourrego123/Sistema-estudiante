@@ -1,5 +1,6 @@
 ﻿using Application.Dtos;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Ports.IEstudianteRepository;
 using Domain.Ports.IInscripcionRepository;
 using MediatR;
@@ -23,7 +24,7 @@ public class ListarCompanerosQueryHandler
         CancellationToken cancellationToken)
     {
         Estudiante estudiante = await _estudianteQueryRepository.ObtenerPorUserIdAsync(request.UserId)
-         ?? throw new KeyNotFoundException("Estudiante no encontrado.");
+         ?? throw new NoEncontradoException("Estudiante");
 
         List<Inscripcion> inscripciones = await _inscripcionQueryRepository.ObtenerPorEstudianteAsync(estudiante.Id);
 

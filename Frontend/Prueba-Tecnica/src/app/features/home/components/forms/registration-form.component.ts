@@ -41,7 +41,7 @@ import { SwalService } from '../../../../core/adapters/alert.service';
           <mat-label>Selecciona hasta 3 materias</mat-label>
           <mat-select formControlName="materiaIds" multiple>
             <mat-option *ngFor="let s of subjects" [value]="s.id">
-              {{ s.nombre }}
+              {{ s.nombre }} || {{s.profesorNombre}}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="form.controls['materiaIds'].hasError('required')">

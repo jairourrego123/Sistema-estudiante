@@ -175,7 +175,8 @@ export class SubjectFormComponent implements OnInit {
         .createSubject({
           nombre: formValue.nombre,
           creditos: formValue.creditos,
-          profesorId: formValue.profesorId
+          profesorId: formValue.profesorId,
+          profesorNombre:formValue.profesorNombre,
         })
         .subscribe({
         next: () => {

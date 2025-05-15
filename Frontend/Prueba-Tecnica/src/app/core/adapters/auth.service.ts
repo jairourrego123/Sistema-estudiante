@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import {jwtDecode} from 'jwt-decode';
 import { AccessToken, AuthTokens } from '../../models/tokens';
 import { environment } from '../../../environments/environment';
-import { Usuario } from '../../models/usuario';
+import { RegistroResponse, Usuario } from '../../models/usuario';
 
 interface DecodedToken {
   nameid: string;       
@@ -24,6 +24,7 @@ interface DecodedToken {
 })
 export class AuthService {
   private apiUrl = `${environment.apiUrlAutenticacion}/auth`;
+  private apiUrlServicio = `${environment.apiUrlSistema}/estudiantes`;
 
   private userSubject = new BehaviorSubject<DecodedToken | null>(null);
   user$ = this.userSubject.asObservable();
@@ -47,15 +48,27 @@ export class AuthService {
   }
 
   register(user: Usuario): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/registrar-usuario`, user);
+    return this.http.post<RegistroResponse>(`${this.apiUrl}/registrar-usuario`, user).pipe(
+      this.CrearEstudiante(user)
+    );
   }
 
+ 
   generarEnlaceRestablecimiento(email: string): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/password/enlace-restablecimiento`, { email });
   }
 
   restablecerContraseña(email: string, token: string, nuevaContrasena: string): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/password/restablecer`, { email, token, nuevaContrasena });
+  }
+  
+  private CrearEstudiante(user: Usuario) {
+    return switchMap((response: RegistroResponse): Observable<void> => {
+      const userId = response.userId;
+      const nombre = user.nombre;
+      const apellido = user.apellido;
+      return this.http.post<void>(this.apiUrlServicio, { userId, nombre, apellido });
+    });
   }
 
   private storeTokens(tokens: AuthTokens): void {

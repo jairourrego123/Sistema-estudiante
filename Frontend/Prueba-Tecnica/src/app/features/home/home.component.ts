@@ -64,7 +64,8 @@ import { HeaderComponent } from "./components/header/header.component"
     
     .content {
       padding: 20px;
-      background-color: #f5f7fa;
+      background-color: rgba(26, 188, 156, 0.1) !important;
+      
       min-height: calc(100vh - 64px);
       display: flex;
       justify-content: center;

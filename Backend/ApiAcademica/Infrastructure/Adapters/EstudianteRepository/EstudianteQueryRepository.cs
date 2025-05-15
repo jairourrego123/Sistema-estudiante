@@ -12,65 +12,62 @@ public class EstudianteQueryRepository : IEstudianteQueryRepository
 {
     private readonly ISqlConnectionFactory _cf;
     public EstudianteQueryRepository(ISqlConnectionFactory cf) => _cf = cf;
-
-    public async Task<Estudiante?> ObtenerPorUserIdAsync(string userId)
+    public async Task<Estudiante> ObtenerPorUserIdAsync(string userId)
     {
         using IDbConnection db = _cf.CreateConnection();
 
-        const string sql = @"
-                          SELECT e.*, i.Id, i.MateriaId, i.FechaGrabacion,
-                                 m.Id, m.Nombre, m.Creditos, m.ProfesorId
-                          FROM Estudiantes e
-                          LEFT JOIN Inscripciones i ON i.EstudianteId = e.Id
-                          LEFT JOIN Materias m      ON m.Id = i.MateriaId
-                          WHERE e.userId = @userId;
-                        ";
-        Dictionary<Guid, Estudiante> dict = new Dictionary<Guid, Estudiante>();
-        await ObtenerConsulta(userId, db, sql, dict);
+        const string storedProcedure = "paObtenerEstudiantePorUserId";
 
-        return dict.Values.FirstOrDefault();
+        Dictionary<Guid, Estudiante> dict = new Dictionary<Guid, Estudiante>();
+        await ObtenerConsulta(userId, db, storedProcedure, dict);
+
+        return dict.Values.FirstOrDefault()!;
     }
 
     public async Task<Estudiante?> ObtenerPorIdAsync(Guid id)
     {
         using IDbConnection db = _cf.CreateConnection();
 
-        const string sql = @"
-                            SELECT Id,UserId,Nombre,Apellido,FechaGrabacion
-                            FROM Estudiantes
-                            WHERE Id = @Id;
-                        ";
+        const string storedProcedure = "paObtenerEstudiantePorId";
 
-        return await db.QueryFirstOrDefaultAsync<Estudiante>(sql, new { Id = id });
+        return await db.QueryFirstOrDefaultAsync<Estudiante>(
+            storedProcedure,
+            new { Id = id },
+            commandType: CommandType.StoredProcedure
+        );
     }
-
 
     public async Task<List<Estudiante>> ObtenerTodosAsync()
     {
         using IDbConnection db = _cf.CreateConnection();
-        const string sql = @"SELECT * FROM Estudiantes;";
-        var list = await db.QueryAsync<Estudiante>(sql);
+
+        const string storedProcedure = "paObtenerTodosEstudiantes";
+
+        IEnumerable<Estudiante> list = await db.QueryAsync<Estudiante>(
+            storedProcedure,
+            commandType: CommandType.StoredProcedure
+        );
         return list.AsList();
     }
 
     public async Task<List<string>> ListarCompañerosAsync(Guid materiaId, string userId)
     {
         using IDbConnection db = _cf.CreateConnection();
-        const string sql = @"
-                          SELECT DISTINCT e.Nombre + ' ' + e.Apellido
-                          FROM Inscripciones i
-                            JOIN Estudiantes e ON e.Id = i.EstudianteId
-                          WHERE i.MateriaId=@materiaId
-                            AND e.UserId<>@userId;
-                        ";
-        var list = await db.QueryAsync<string>(sql, new { materiaId, userId });
+
+        const string storedProcedure = "paListarCompañerosPorMateria";
+
+        IEnumerable<string> list = await db.QueryAsync<string>(
+            storedProcedure,
+            new { materiaId, userId },
+            commandType: CommandType.StoredProcedure
+        );
         return list.AsList();
     }
 
-    private static async Task ObtenerConsulta(string userId, IDbConnection db, string sql, Dictionary<Guid, Estudiante> dict)
+    private static async Task ObtenerConsulta(string userId, IDbConnection db, string storedProcedure, Dictionary<Guid, Estudiante> dict)
     {
         IEnumerable<Estudiante> lista = await db.QueryAsync<Estudiante, Inscripcion, Materia, Estudiante>(
-            sql,
+            storedProcedure,
             (est, ins, mat) =>
             {
                 if (!dict.TryGetValue(est.Id, out var entry))
@@ -86,8 +83,10 @@ public class EstudianteQueryRepository : IEstudianteQueryRepository
                 return entry;
             },
             new { userId },
-            splitOn: "Id,Id"
+            splitOn: "Id,Id",
+            commandType: CommandType.StoredProcedure
         );
     }
+
 
 }

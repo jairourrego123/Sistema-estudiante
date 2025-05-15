@@ -11,7 +11,7 @@ namespace Api.Controllers
 {
     [ApiController]
     [Route("api/profesores")]
-    //[Authorize]
+    [Authorize]
     public class ProfesoresController : ControllerBase
     {
         private readonly IMediator _mediator;

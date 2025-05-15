@@ -22,15 +22,15 @@ namespace Api.Controllers
         [HttpPost("registrar-usuario")]
         public async Task<IActionResult> RegistrarUsuario([FromBody] RegistroDto dto)
         {
-            await _authService.RegistrarUsuarioAsync(dto);
-            return Created();
+            string userId = await _authService.RegistrarUsuarioAsync(dto);
+            return Ok(new { userId });
         }
 
         /// <summary>Inicia sesión y retorna token JWT.</summary>
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
-            var response = await _authService.LoginAsync(dto);
+            ResponseJwtDto response = await _authService.LoginAsync(dto);
             return Ok(response);
         }
 
@@ -38,7 +38,7 @@ namespace Api.Controllers
         [HttpPost("token/refresh")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto dto)
         {
-            var token = await _authService.RefreshAccessTokenAsync(dto);
+            ResponseJwtDto token = await _authService.RefreshAccessTokenAsync(dto);
             return Ok(token);
         }
 

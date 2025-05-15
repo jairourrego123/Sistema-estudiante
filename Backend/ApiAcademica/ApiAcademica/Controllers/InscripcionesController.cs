@@ -13,7 +13,7 @@ namespace Api.Controllers
 {
     [ApiController]
     [Route("api/inscripciones")]
-    //[Authorize]
+    [Authorize]
     public class InscripcionesController : ControllerBase
     {
         private readonly IMediator _mediator;

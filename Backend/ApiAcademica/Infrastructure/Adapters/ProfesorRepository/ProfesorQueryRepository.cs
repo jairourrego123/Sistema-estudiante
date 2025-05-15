@@ -16,21 +16,19 @@ public class ProfesorQueryRepository : IProfesorQueryRepository
     public async Task<Profesor?> ObtenerPorIdAsync(Guid id)
     {
         using IDbConnection db = _cf.CreateConnection();
-        const string sql = @"
-                      SELECT p.*, m.Id, m.Nombre, m.Creditos, m.ProfesorId
-                      FROM Profesores p
-                      LEFT JOIN Materias m ON m.ProfesorId = p.Id
-                      WHERE p.Id = @id;";
+
+        const string storedProcedure = "paObtenerProfesorPorId";
 
         Dictionary<Guid, Profesor> dict = new Dictionary<Guid, Profesor>();
-        await ObtenerConsulta(id, db, sql, dict);
+        await ObtenerConsulta(id, db, storedProcedure, dict);
+
         return dict.Values.FirstOrDefault();
     }
 
-    private static async Task ObtenerConsulta(Guid id, IDbConnection db, string sql, Dictionary<Guid, Profesor> dict)
+    private static async Task ObtenerConsulta(Guid id, IDbConnection db, string storedProcedure, Dictionary<Guid, Profesor> dict)
     {
         IEnumerable<Profesor> lista = await db.QueryAsync<Profesor, Materia, Profesor>(
-            sql,
+            storedProcedure,
             (prof, mat) =>
             {
                 if (!dict.TryGetValue(prof.Id, out var entry))
@@ -45,15 +43,22 @@ public class ProfesorQueryRepository : IProfesorQueryRepository
                 return entry;
             },
             new { id },
-            splitOn: "Id"
+            splitOn: "Id",
+            commandType: CommandType.StoredProcedure
         );
     }
 
     public async Task<List<Profesor>> ObtenerTodosAsync()
     {
         using IDbConnection db = _cf.CreateConnection();
-        const string sql = "SELECT * FROM Profesores;";
-        IEnumerable<Profesor> list = await db.QueryAsync<Profesor>(sql);
+
+        const string storedProcedure = "paObtenerTodosLosProfesores";
+
+        IEnumerable<Profesor> list = await db.QueryAsync<Profesor>(
+            storedProcedure,
+            commandType: CommandType.StoredProcedure
+        );
+
         return list.AsList();
     }
 }

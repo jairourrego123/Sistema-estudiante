@@ -12,9 +12,7 @@ public class ListarEstudiantesQueryHandler
     public ListarEstudiantesQueryHandler(IEstudianteQueryRepository estudianteQueryRepository)
         => _estudianteQueryRepository = estudianteQueryRepository;
 
-    public async Task<List<Estudiante>> Handle(
-        ListarEstudiantesQuery request,
-        CancellationToken cancellationToken)
+    public async Task<List<Estudiante>> Handle( ListarEstudiantesQuery request,CancellationToken cancellationToken)
     {
         return await _estudianteQueryRepository.ObtenerTodosAsync();
     }

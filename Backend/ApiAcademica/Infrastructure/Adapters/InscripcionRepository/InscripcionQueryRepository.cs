@@ -20,30 +20,19 @@ public class InscripcionQueryRepository : IInscripcionQueryRepository
     {
         using IDbConnection db = _cf.CreateConnection();
 
-        const string sql = @"
-                            SELECT 
-                                i.Id AS InscripcionId,
-                                i.EstudianteId,
-                                i.MateriaId,
-                                m.Id AS MateriaId,
-                                m.Nombre AS MateriaNombre,
-                                m.Creditos,
-                                p.Id AS ProfesorId,
-                                p.Nombre AS ProfesorNombre
-                            FROM Inscripciones i
-                            JOIN Materias m ON m.Id = i.MateriaId
-                            JOIN Profesores p ON m.ProfesorId = p.Id
-                            WHERE i.EstudianteId = @estudianteId;
-                        ";
+        const string storedProcedure = "paObtenerInscripcionesPorEstudiante";
 
         IEnumerable<InscripcionDetalleDto> resultado = await db.QueryAsync<InscripcionDetalleDto>(
-            sql,
-            new { estudianteId }
+            storedProcedure,
+            new { EstudianteId = estudianteId },
+            commandType: CommandType.StoredProcedure
         );
+
         List<Inscripcion> inscripciones = MapToInscripcion(resultado);
 
         return inscripciones;
     }
+
 
     private static List<Inscripcion> MapToInscripcion(IEnumerable<InscripcionDetalleDto> resultado)
     {

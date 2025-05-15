@@ -8,6 +8,8 @@ import { GenericTableComponent, TableColumn } from "../components/generictable/g
 import { StudentService } from "../../../core/adapters/student.service"
 import { Nombre,  Student } from "../../../models/student"
 import { StudentFormComponent } from "../components/forms/student-form.component"
+import { AuthService } from "../../../core/adapters/auth.service"
+import { SwalService } from "../../../core/adapters/alert.service"
 
 
 @Component({
@@ -18,10 +20,6 @@ import { StudentFormComponent } from "../components/forms/student-form.component
     <div class="page-container">
       <div class="page-header">
         <h1>Compañeros</h1>
-        <!-- <button mat-flat-button color="primary" (click)="openStudentForm()">
-          <mat-icon>add</mat-icon>
-          Nuevo Estudiante
-        </button> -->
       </div>
       
       <mat-card>
@@ -29,7 +27,7 @@ import { StudentFormComponent } from "../components/forms/student-form.component
           <app-generic-table
             [columns]="columns"
             [data]="classmates"
-            [totalItems]="totalStudents"
+            [totalItems]="classmates.length"
             [pageSize]="pageSize"
             (onView)="viewStudent($event)"
             (onEdit)="editStudent($event)"
@@ -44,6 +42,9 @@ import { StudentFormComponent } from "../components/forms/student-form.component
   `,
   styles: [
     `
+    .button-add{
+      background-color:#1abc9c !important
+    }
     .page-container {
       padding: 24px;
       width: 100%;
@@ -81,27 +82,32 @@ export class StudentsComponent implements OnInit {
   currentPage = 0
   classmates: Nombre[] = [];
   totalStudents = this.classmates.length
-  
+  userId = ""
   constructor(
     private studentService: StudentService,
     private dialog: MatDialog,
-  ) {}
+    private authService: AuthService ,
+    private swalService: SwalService ,
+    
+
+  ) {
+    this.userId = this.authService.getUserId() ?? "";
+
+  }
 
   ngOnInit() {
     this.loadStudents()
   }
 
   loadStudents() {
-    this.studentService.getClassmates("7a235c0b-9fbb-48d8-8971-bb004e1452e9").subscribe(
+    this.studentService.getClassmates(this.userId).subscribe(
       (response) => {
           
           this.classmates = response
           this.totalStudents = response.length 
       },
-      (error) => {
-       alert(error.error)
+      (error) => this.swalService.showError(error.error.message)
 
-      },
     )
   }
 
@@ -133,9 +139,8 @@ export class StudentsComponent implements OnInit {
         () => {
           this.loadStudents()
         },
-        (error) => {
-        alert(error.error)
-        },
+        (error) => this.swalService.showError(error.error.message)
+
       )
     }
   }

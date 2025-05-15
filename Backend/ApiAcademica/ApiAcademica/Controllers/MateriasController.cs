@@ -12,7 +12,7 @@ namespace Api.Controllers
 {
     [ApiController]
     [Route("api/materias")]
-    //[Authorize]
+    [Authorize]
     public class MateriasController : ControllerBase
     {
         private readonly IMediator _mediator;

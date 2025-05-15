@@ -3,5 +3,5 @@ export interface Subject {
     nombre: string;
     creditos: number;
     profesorId: string;
-    fechaGrabacion: string; 
+    profesorNombre: string; 
   }

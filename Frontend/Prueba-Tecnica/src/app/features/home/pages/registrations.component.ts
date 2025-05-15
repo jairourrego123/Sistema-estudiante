@@ -29,7 +29,7 @@ import { AuthService } from '../../../core/adapters/auth.service';
     <div class="page-container">
       <div class="page-header">
         <h1>Inscripciones</h1>
-        <button mat-flat-button color="primary" (click)="openRegistrationForm()">
+        <button mat-flat-button color="primary" class="button-add" (click)="openRegistrationForm()">
           <mat-icon>add</mat-icon>
           Nueva Inscripción
         </button>
@@ -40,6 +40,7 @@ import { AuthService } from '../../../core/adapters/auth.service';
           <app-generic-table
             [columns]="columns"
             [data]="registrations"
+            [totalItems]="registrations.length"
             (onDelete)="desinscribir($event)">
           </app-generic-table>
         </mat-card-content>
@@ -47,6 +48,9 @@ import { AuthService } from '../../../core/adapters/auth.service';
     </div>
   `,
   styles: [`
+    .button-add{
+      background-color:#1abc9c !important
+    }
     .page-container { padding: 24px; width: 100%; }
     .page-header {
       display: flex; justify-content: space-between; align-items: center;
@@ -62,14 +66,13 @@ export class RegistrationsComponent implements OnInit {
   columns: TableColumn[] = [
     { name: 'ID',         property: 'id',             sortable: true, visible: false },
     { name: 'Estudiante', property: 'estudianteId',   sortable: true, visible: false },
-    { name: 'Materia',    property:  'MateriaNombre' ,     sortable: true, visible: true },
-    { name: 'Creditos',    property:  'Creditos' ,     sortable: true, visible: true },
-    { name: 'Profesor',      property: 'ProfesorNombre', sortable: true, visible: true }
+    { name: 'Materia',    property:  'materiaNombre' ,     sortable: true, visible: true },
+    { name: 'Creditos',    property:  'creditos' ,     sortable: true, visible: true },
+    { name: 'Profesor',      property: 'profesorNombre', sortable: true, visible: true }
   ];
 
   registrations: Registration[] = [];
 
-  // private readonly userId = '7a235c0b-9fbb-48d8-8971-bb004e1452e9';
   userId = ""
   constructor(
     private swalService: SwalService ,
@@ -91,7 +94,8 @@ export class RegistrationsComponent implements OnInit {
   private loadRegistrations(): void {
     this.registrationService.getRegistrations(this.userId).subscribe({
       next: (data: Registration[]) => this.registrations = data,
-      error: err => alert(err.error)
+      error: err => this.swalService.showError(err.error.message)
+
     });
   }
 

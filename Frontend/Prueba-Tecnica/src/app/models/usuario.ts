@@ -5,3 +5,6 @@ export interface Usuario {
     password: string;
   
 }
+export interface RegistroResponse {
+    userId: string;  
+  }

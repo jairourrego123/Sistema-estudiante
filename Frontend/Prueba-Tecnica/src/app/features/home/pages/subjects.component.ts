@@ -33,7 +33,7 @@ import { SwalService } from '../../../core/adapters/alert.service';
     <div class="page-container">
       <div class="page-header">
         <h1>Materias</h1>
-        <button mat-flat-button color="primary" (click)="openSubjectForm()">
+        <button mat-flat-button color="primary" class="button-add" (click)="openSubjectForm()">
           <mat-icon>add</mat-icon>
           Nueva Materia
         </button>
@@ -54,6 +54,9 @@ import { SwalService } from '../../../core/adapters/alert.service';
     </div>
   `,
   styles: [`
+    .button-add{
+      background-color:#1abc9c !important
+    }
     .page-container {
       padding: 24px;
       width: 100%;
@@ -84,7 +87,7 @@ export class SubjectsComponent implements OnInit {
   ];
 
   subjects: Subject[] = [];
-
+  
   constructor(
     private swalService: SwalService ,
     private subjectService: SubjectService,
@@ -98,7 +101,7 @@ export class SubjectsComponent implements OnInit {
   loadSubjects(): void {
     this.subjectService.getSubjects().subscribe({
       next: (data: Subject[]) => this.subjects = data,
-      error: (err: any) =>  alert(err.error)
+      error: err => this.swalService.showError(err.error.message)
     });
   }
 

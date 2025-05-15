@@ -31,10 +31,12 @@ public class AuthService : IAuthRepository
 
     }
 
-    public async Task RegistrarUsuarioAsync(RegistroDto registroDto)
+    public async Task<string> RegistrarUsuarioAsync(RegistroDto registroDto)
     {
-        await _usuarioRepository.CrearUsuarioAsync(registroDto);
+        string userId = await _usuarioRepository.CrearUsuarioAsync(registroDto);
         await NotificarRegistroUsuario(registroDto);
+        return userId;
+
     }
 
     public async Task<ResponseJwtDto> LoginAsync(LoginDto loginDto)

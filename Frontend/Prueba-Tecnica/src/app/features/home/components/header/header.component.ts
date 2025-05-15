@@ -24,7 +24,7 @@ import { AuthService } from "../../../../core/adapters/auth.service"
       <span class="spacer"></span>
       
       
-      {{nombreUsuario}}
+      {{nombreUsuario.toUpperCase()}}
 
       <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-avatar">
         <img src="assets/avatar.png"  class="avatar-img">
@@ -44,6 +44,7 @@ import { AuthService } from "../../../../core/adapters/auth.service"
   styles: [
     `
     .header-toolbar {
+    
       background-color: white;
       color: #333;
       border-bottom: 1px solid #e9ecef;
